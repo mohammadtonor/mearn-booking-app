@@ -6,12 +6,16 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
+.env.e2e
+.env
 
 node_modules
 dist
 dist-ssr
 *.local
+backend/.env
 .env
+backend/.env.e2e
 
 # Editor directories and files
 .vscode/*
