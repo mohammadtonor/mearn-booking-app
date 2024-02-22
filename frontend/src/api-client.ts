@@ -1,7 +1,7 @@
 import { RegisterFormData } from "./pages/Register";
 import { SignInFormData } from "./pages/Signin";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || ''
 
 export const register = async (formData: RegisterFormData) => {
     const response = await fetch(`${API_BASE_URL}/api/users/register`, {
@@ -21,6 +21,8 @@ export const register = async (formData: RegisterFormData) => {
 }
 
 export const SignIn = async (formData: SignInFormData) => {
+    console.log(API_BASE_URL);
+    
     const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
         method: 'POST',
         credentials: "include",
