@@ -20,6 +20,6 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"],
+  "include": ["src", "src/ManageHotelForm"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
