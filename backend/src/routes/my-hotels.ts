@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import multer from "multer";
 import cloudinary from "cloudinary";
-import Hotel, { HotelType } from '../models/Hotel';
+import Hotel, { HotelType } from '../models/hotel';
 import verifyToken from '../middleware/auth';
 import { body } from 'express-validator';
 
@@ -46,7 +46,7 @@ router.post(
             console.log(e);
             res.status(500).json({ message: "Something went wrong" });
           }
-    }
+    }  
 )
 
 async function uploadImages(imageFiles: Express.Multer.File[]) {
