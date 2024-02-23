@@ -5,7 +5,7 @@ const DetailsSection = () => {
     const { register, formState: { errors } } = useFormContext<HotelFormData>();
 
     return (
-        <div className="flex flex-col gap-4 mx-auto max-w-4xl">
+        <div className="mx-auto max-w-4xl">
             <h1 className="text-3xl font-bold ">Add Hotel</h1>
             <label className="text-gray-700 text-sm font-bold flex-1">
                 Name

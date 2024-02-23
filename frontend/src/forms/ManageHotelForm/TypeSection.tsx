@@ -1,13 +1,14 @@
 import { useFormContext } from "react-hook-form";
 import { hotelType } from "../../config/hotel-options-config";
+import { HotelFormData } from "./ManageHotelForm";
 
 const TypeSection = () => {
-    const { register, watch } = useFormContext();
-    const typeWatch = watch("type")
+    const { register, watch, formState: { errors } } = useFormContext<HotelFormData>();
+    const typeWatch = watch("type") 
     return (
-        <div className="mx-auto max-w-4xl">
-            <h2 className="text-2xl font-bold mb-3">Type</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 ">
+        <div className="">
+            <h2 className="text-2xl font-bold mb-3 max-w-3xl mx-auto">Type</h2>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 max-w-3xl mx-auto gap-4 ">
                 {hotelType.map((type) => (
                     <label
                         className={
@@ -22,11 +23,15 @@ const TypeSection = () => {
                             {...register("type", {
                                 required: "This field is required"
                             })}
+                            className="hidden"
                         />
                         <span>{type}</span>
                     </label>
                 ))}  
             </div>
+            {errors.type && (
+                <span className="text-rose-600">{errors.type.message}</span>
+            )}
         </div>
     )
 }
