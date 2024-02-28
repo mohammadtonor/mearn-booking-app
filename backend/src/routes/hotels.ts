@@ -12,7 +12,7 @@ const router = express.Router();
 router.get('/search', async (req: Request, res:Response) => {
     try {
         const query = constructSearchQuery(req.query);
-
+        
         let sortOption = {};
         switch (req.query.sortOptions) {
             case "starRating":
@@ -40,7 +40,6 @@ router.get('/search', async (req: Request, res:Response) => {
             .limit(pageSize);
 
         const total = await Hotel.countDocuments(query);
-        
         const response: HotelSearchResponse = {
             data: hotels,
             pagination: {
@@ -56,6 +55,16 @@ router.get('/search', async (req: Request, res:Response) => {
         res.status(500).json({ message: "Something went wrong" });
     }
 });
+
+router.get('/', async (req: Request, res: Response) => {
+    try {
+        const hotels = await Hotel.find().sort("-lastUpdated");
+        res.json(hotels);
+    } catch (error) {
+        console.log("error", error);
+        res.status(500).json({ message: "Something went wrong" });
+    }
+})
 
 router.get(
     "/:id",
@@ -176,6 +185,20 @@ const constructSearchQuery = (queryParams: any) => {
             { country: new RegExp(queryParams.destination, "i") }
         ];
     }
+    
+    if (queryParams.checkIn || queryParams.checkOut) {
+        constructedQuery  = {
+            bookings: {
+                $not: {
+                $elemMatch: {
+                    checkOut: { $lte: new Date(queryParams.checkOut) },
+                    //checkIn: { $gte: new Date(queryParams.checkIn) },
+                
+                }
+            }
+        }
+        }
+    }
 
     if (queryParams.adultCount) {
         constructedQuery.adultCount = {
@@ -220,7 +243,8 @@ const constructSearchQuery = (queryParams: any) => {
             $lte: parseInt(queryParams.maxPrice)
         }
     }
-
+    console.log(constructedQuery);
+    
     return constructedQuery;
 }
 

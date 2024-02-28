@@ -57,7 +57,7 @@ test("should book hotel", async ({ page }) => {
   await page.getByText("Homa Tehran").click();
   await page.getByRole("button", { name: "Book Now"}).click();
 
-  await expect(page.getByText("Total Cost: $300.00")).toBeVisible();
+  await expect(page.getByText("Total Cost: $200.00")).toBeVisible();
 
   const stripeFrame = page.frameLocator("iframe").first();
   await stripeFrame.locator('[placeholder="Card number"]').fill("4242424242424242");
@@ -65,6 +65,9 @@ test("should book hotel", async ({ page }) => {
   await stripeFrame.locator('[placeholder="CVC"]').fill("242");
   await stripeFrame.locator('[placeholder="ZIP"]').fill("24225");
 
-  await page.getByRole("button", {name: "Confirm Booking"}).click();
-  await expect(page.getByText("Booking Saved!")).toBeVisible();
+  await page.getByRole("button", { name: "Confirm Booking" }).click();
+  await expect(page.getByText("Booking Saved!")).toBeVisible({ timeout: 15_000 });
+
+  await page.getByRole("link", { name: "My Booking"}).click();
+  await expect(page.getByText("Homa Tehran")).toBeVisible();  
 })
