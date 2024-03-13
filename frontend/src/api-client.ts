@@ -192,20 +192,18 @@ export const fetchHotelById = async (hotelId: string): Promise<HotelType> => {
     return response.json();
 }
 
-export const createPaymentIntent = async (hotelId:  string, numberOfNights: string): Promise<PaynentIntentResponse> => {
-    
-    console.log("numberOfNights", numberOfNights);
-    
+export const createPaymentIntent = async (hotelId:  string, totlaPrice: string): Promise<PaynentIntentResponse> => {
+        
     const response = await fetch(`${API_BASE_URL}/api/hotels/${hotelId}/bookings/payment-intent`, {
         credentials: "include",
         method: "POST",
-        body: JSON.stringify({ numberOfNights}),
+        body: JSON.stringify({ totlaPrice }),
         headers: {
             "Content-Type": "application/json",
         },
     });
 
-    if(!response.ok) {
+    if(!response.ok) { 
         throw new Error("Failed to create payment intent");
     }
 

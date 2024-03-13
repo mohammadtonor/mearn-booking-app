@@ -65,6 +65,7 @@ const DetailsSection = () => {
                     <span className="text-rose-600">{errors.pricePerNight.message}</span>
                 )}
             </label>
+            
             <label className="text-gray-700 text-sm font-bold flex-1">
                 star Rating
                 <select 

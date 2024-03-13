@@ -90,18 +90,16 @@ router.post(
     "/:hotelId/bookings/payment-intent",
     verifyToken,
     async (req: Request, res: Response) => {
-        const { numberOfNights } = req.body;
+        const { totlaPrice } = req.body;
         const hotelId = req.params.hotelId;
 
         const hotel = await Hotel.findById(hotelId);
         if(!hotel) {
             return res.status(404).json({ message: "Hotel not found" })
         }
-
-        const totalCost = hotel.pricePerNight * numberOfNights;
         
         const paymentIntent = await stripe.paymentIntents.create({
-            amount: totalCost * 100,
+            amount: totlaPrice * 100,
             currency: "gbp",
             metadata: {
               hotelId,
@@ -116,7 +114,7 @@ router.post(
         const response = {
             paymentIntentId: paymentIntent.id,
             clientSecret: paymentIntent.client_secret.toString(),
-            totalCost, 
+            totlaPrice, 
         };
 
         res.send(response); 
@@ -191,14 +189,22 @@ const constructSearchQuery = (queryParams: any) => {
             bookings: {
                 $not: {
                 $elemMatch: {
-                    checkOut: { $lte: new Date(queryParams.checkOut) },
-                    //checkIn: { $gte: new Date(queryParams.checkIn) },
-                
+                    $or: [
+                            { 
+                              checkIn: { $lte: new Date(queryParams.checkOut)},
+                              checkOut: { $gte: new Date(queryParams.checkOut)} 
+                            },
+                            { 
+                              checkOut: { $gte: new Date(queryParams.checkIn)}, 
+                              checkIn: { $lte: new Date(queryParams.checkIn)}
+                            },
+                    ]
+            
                 }
-            }
+            } 
         }
         }
-    }
+    } 
 
     if (queryParams.adultCount) {
         constructedQuery.adultCount = {

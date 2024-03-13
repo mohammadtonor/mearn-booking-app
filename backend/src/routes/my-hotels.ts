@@ -32,21 +32,24 @@ router.post(
         try {
             const imageFiles = req.files as Express.Multer.File[];
             const newHotel: HotelType = req.body;
-      
+          
+            console.log(req.body);
+            
             const imageUrls = await uploadImages(imageFiles);
       
             newHotel.imageUrls = imageUrls;
             newHotel.lastUpdated = new Date();
             newHotel.userId = req.userId;
       
-            const hotel = new Hotel(newHotel);
-            await hotel.save();
-      
+            const newhotel = new Hotel(newHotel);
+            newhotel.hotelPriceRange = req.body.hotelPriceRange
+            const hotel = await newhotel.save();
+
             res.status(201).send(hotel);
           } catch (e) {
             console.log(e);
             res.status(500).json({ message: "Something went wrong" });
-          }
+          } 
     }  
 );
 

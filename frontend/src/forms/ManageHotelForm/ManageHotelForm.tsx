@@ -4,8 +4,9 @@ import TypeSection from "./TypeSection";
 import FacilitiesSection from "./FacilitiesSection";
 import GuestsSection from "./GuestsSection";
 import ImagesSection from "./ImagesSection";
-import { HotelType } from "../../../../backend/src/shared/type";
-import { useEffect } from "react";
+import { HotelPriceRange, HotelType } from "../../../../backend/src/shared/type";
+import { useEffect, useState } from "react";
+import HotelFormRange from "./HotelFormRange";
 
 export type HotelFormData = {
   name: string;
@@ -20,6 +21,7 @@ export type HotelFormData = {
   imageUrls: string[];
   adultCount: number;
   childCount: number;
+  hotelPriceRange: HotelPriceRange[];
 };
 
 type Props = {
@@ -31,7 +33,10 @@ type Props = {
 const ManageHotelForm = ({ onSave, isLoading, hotel }: Props) => {
   const formMethods = useForm<HotelFormData>();
   const { handleSubmit, reset } = formMethods;
+  const [hotelPrices, setHotelPrices] = useState<HotelPriceRange[]>(hotel?.hotelPriceRange  || []) 
 
+ 
+  
   useEffect(() => {
     reset(hotel)
   }, [hotel, reset]);
@@ -42,7 +47,7 @@ const ManageHotelForm = ({ onSave, isLoading, hotel }: Props) => {
     if (hotel) {
       formData.append("hotelId", hotel._id);
     }
-
+    
     formData.append("name", formDataJson.name);
     formData.append("city", formDataJson.city);
     formData.append("country", formDataJson.country);
@@ -62,10 +67,24 @@ const ManageHotelForm = ({ onSave, isLoading, hotel }: Props) => {
         formData.append(`imageUrls[${index}]`, url);
       });
     }
+
+    if (hotelPrices.length > 0 ){
+        hotelPrices.forEach((priceRange, index) => {
+        formData.append(`hotelPriceRange[${index}][checkIn]`, priceRange.checkIn.toString());
+        formData.append(`hotelPriceRange[${index}][checkOut]`, priceRange.checkOut.toString());
+        formData.append(`hotelPriceRange[${index}][price]`, priceRange.price.toString());
+        
+      });
+    }
+
     
     Array.from(formDataJson.imageFiles).forEach((imageFile) => {
       formData.append(`imageFiles`, imageFile);
     });
+
+    console.log(formData.get('childCount'));
+    
+
     onSave(formData);
   });
 
@@ -73,6 +92,7 @@ const ManageHotelForm = ({ onSave, isLoading, hotel }: Props) => {
     <FormProvider {...formMethods}>
       <form className="flex flex-col gap-10" onSubmit={onSubmit}>
         <DetailsSection />
+        <HotelFormRange hotelPrices={hotelPrices} setHotelPrices={setHotelPrices}/>
         <TypeSection />
         <FacilitiesSection />
         <GuestsSection />

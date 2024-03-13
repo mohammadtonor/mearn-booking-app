@@ -14,6 +14,7 @@ export type HotelType =  {
     imageUrls: string[];
     lastUpdated: Date; 
     bookings: BookingType[];
+    hotelPriceRange: HotelPriceRange[]
 }
 
 export type HotelSearchResponse = {
@@ -50,4 +51,10 @@ export type BookingType = {
     checkIn: Date;
     checkOut: Date;
     totalCost: number;
+}
+
+export type HotelPriceRange = {
+    checkIn: Date;
+    checkOut: Date;
+    price: number;
 }

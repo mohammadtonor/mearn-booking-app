@@ -28,7 +28,8 @@ const EditHotel = () => {
   const handleSave = (hotelFormData: FormData) => {
     mutate(hotelFormData);
   }
-
+  console.log(hotel);
+  
   return (
     <ManageHotelForm hotel={hotel} onSave={handleSave} isLoading={isLoading}/>
   )

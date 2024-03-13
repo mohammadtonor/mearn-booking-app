@@ -12,26 +12,9 @@ const Booking  = () => {
     const { stripePromise } = useAppContext();
     const search = useSearchContext();
     const { hotelId } = useParams();
-    
     const [numberOfNight , setNumberOfNight] = useState<number>(0) 
+    const [totlaPrice, setTotlaPrice] = useState<number>(0)
     
-    useEffect(() => {
-        if (search.checkIn && search.checkOut) {
-            const nights = Math.abs((search.checkOut.getTime() - search.checkIn.getTime()) / (1000 * 60 * 60 * 24)
-            );
-            console.log(nights);
-            
-             setNumberOfNight(Math.ceil(nights));
-        }
-    }, [search.checkIn, search.checkOut ]);
-
-    const { data: paymentIntentData } = useQuery("createPaymentIntent", () => 
-        apiClient.createPaymentIntent(hotelId as string, numberOfNight.toString()),
-        {
-            enabled: !!hotelId && numberOfNight > 0
-        }
-    )
-
     const { data: hotel } = useQuery(
         "fetchHotelById",
         () => apiClient.fetchHotelById(hotelId as string),
@@ -39,6 +22,53 @@ const Booking  = () => {
             enabled: !!hotelId    
         }
     );
+
+    const calculatePrice = () => {
+        const end = new Date(search.checkOut.getTime());
+        const start = new Date(search.checkIn.getTime());
+        const date = new Date(start.getTime());
+        
+        let prices = [];
+        while(date < end) {
+             prices.push((hotel?.hotelPriceRange
+                .find(price => 
+                    (
+                        new Date(price.checkIn) < date && date < new Date(price.checkOut) 
+                        || date.getDate() === new Date(price.checkOut).getDate() 
+                    )
+                )
+                ?.price)
+            );
+                date.setDate(date.getDate() + 1);                
+        }
+        return prices;
+    }
+
+    useEffect(() => {
+        const total =  calculatePrice().reduce((price: number, acc: any) => {
+            return price + acc;
+        }, 0)
+        setTotlaPrice(total);
+    }, [])
+
+    useEffect(() => {
+        if (search.checkIn && search.checkOut) {
+            const nights = Math.abs((search.checkOut.getTime() - search.checkIn.getTime()) / (1000 * 60 * 60 * 24)
+            );
+            
+             setNumberOfNight(Math.ceil(nights));
+        }
+    }, [search.checkIn, search.checkOut ]);
+        
+
+    const { data: paymentIntentData } = useQuery("createPaymentIntent", () => 
+        apiClient.createPaymentIntent(hotelId as string, totlaPrice.toString()),
+        {
+            enabled: !!hotelId && numberOfNight > 0
+        }
+    )    
+    
+
 
     const { data: currentUser } = useQuery(
         "fetchCurrentUser", apiClient.fetchCurrentUser

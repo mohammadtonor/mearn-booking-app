@@ -86,7 +86,7 @@ const GuestInfoForm = ({ hotelId, pricePerNight }: Props) => {
                             placeholderText="Check in Date"
                             className="min-w-full bg-white p-2 focus:outline-none"
                             wrapperClassName="min-w-full"
-                            />
+                        />
                     </div>
                     <div>
                         <DatePicker
